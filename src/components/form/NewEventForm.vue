@@ -29,6 +29,19 @@ const resetForm = () => {
   }
 };
 
+const handleImageUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if(target && target.files){
+  const file = target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      event_image = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+}
 
 let event_title ='';
 let start_date = '';
@@ -52,9 +65,14 @@ const submitForm = async () => {
     max_participants: max_participants,
     description: description,
     cityName: cityName,
-    event_image: event_image
+    // event_image: event_image
   }, {withCredentials:true}) 
-  
+
+  axios.post("http://localhost:8080/api/v1/images",{
+   
+   event_image: event_image
+ }, {withCredentials:true}) 
+
   .then(response => {
     alert('El evento se ha creado con éxito');
     resetForm();
@@ -141,7 +159,7 @@ const submitForm = async () => {
       </div>
       <div class="mb-3">
         <label for="formFile" class="form-label">Imagen:</label>
-        <input class="form-control" type="file" id="formFile" />
+        <input class="form-control" type="file" id="formFile" @change="handleImageUpload"/>
       </div>
       <div class="SubmitButton">
         <button class="subBtn" type="submit"  @click="submitForm">Guardar</button>
